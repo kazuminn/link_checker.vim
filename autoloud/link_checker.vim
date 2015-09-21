@@ -5,16 +5,36 @@ function! Report()
     echo "hoge"
 endfunction
 
-function! Matcher(inputfile)
-    for line in readfile(a:inputfile)
-        let link = matchstr(line,'|\S\{-}|')
-        for line2 in readfile(a:inputfile)
-            if match(line2, line)
-            else
-                call Report()
-            endif
-        endfor
+function! GetFromLinkTagList(path)
+    let l:list = []
+    for line in readfile(a:path)
+        call add(list, matchstr(matchstr(line,'|\S\{-}|'),'\w.*\w'))
     endfor
+    return l:list
+endfunction
+
+
+function! GetToLinkTagList(path)
+    let l:list = []
+    for line in readfile(a:path)
+        call add(list, matchstr(matchstr(line,'\*\S\{-}\*'),'\w.*\w'))
+    endfor
+    return l:list
+endfunction
+
+
+function! Matcher(path)
+    let fromLinkTagList = GetFromLinkTagList(a:path)
+    let toLinkTagList = GetToLinkTagList(a:path)
+
+    for char in toLinkTagList
+        if match(fromLinkTagList,char)
+            return 0
+        else
+            return 1
+        endif
+    endfor
+
 endfunction
 
 
@@ -26,7 +46,9 @@ endfunction
 function! Main()
     let l:paths =  PathGet()
     for path in l:paths
-        call Matcher(path)
+        if  Matcher(path)
+            call Report()
+        endif
     endfor
 endfunction
 
