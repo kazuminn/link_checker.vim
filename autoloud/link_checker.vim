@@ -25,7 +25,7 @@ function! Matcher(path)
 
     for char in fromLinkTagList
         if match(toLinkTagList,char)
-            return [0,"hoge"]
+            return [0,char]
         else
             return 1
         endif
