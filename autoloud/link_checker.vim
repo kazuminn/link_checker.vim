@@ -1,10 +1,6 @@
 let s:save_cpo = &cpo
 set cpo&vim
 
-function! Report()
-    echo "hoge"
-endfunction
-
 function! GetFromLinkTagList(path)
     let l:list = []
     for line in readfile(a:path)
@@ -27,9 +23,9 @@ function! Matcher(path)
     let fromLinkTagList = GetFromLinkTagList(a:path)
     let toLinkTagList = GetToLinkTagList(a:path)
 
-    for char in toLinkTagList
-        if match(fromLinkTagList,char)
-            return 0
+    for char in fromLinkTagList
+        if match(toLinkTagList,char)
+            return [0,"hoge"]
         else
             return 1
         endif
@@ -43,12 +39,22 @@ function! PathGet()
 endfunction
 
 
+
+function! Report(place)
+    echo a:place
+endfunction
+
+
+
 function! Main()
     let l:paths =  PathGet()
     for path in l:paths
-        if  Matcher(path)
-            call Report()
+        let l:infomation = Matcher(path)
+        if l:infomation[0]
+        else
+            call Report(l:infomation[1])
         endif
+
     endfor
 endfunction
 
