@@ -41,7 +41,10 @@ endfunction
 
 
 function! Report(place)
-    echo a:place
+    let ret = [{'filename':a:place}]
+
+    call setqflist(ret, 'a')
+    copen
 endfunction
 
 
