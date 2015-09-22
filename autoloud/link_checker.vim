@@ -40,7 +40,6 @@ function! PathGet()
 endfunction
 
 
-
 function! Report(notlink,filename)
     let ret = [{'filename':a:filename,'text':"hoge"}]
 
