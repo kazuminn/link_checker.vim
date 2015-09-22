@@ -25,10 +25,10 @@ function! Matcher(path)
 
     for char in toLinkTagList
         if match(fromLinkTagList,char)
-            let match_list= matchstr(fromLinkTagList,char)
-            return [0,match_list]
+            let match_list= filter(fromLinkTagList,'v:val =~ char')
+            return [0,"hoge"]
         else
-            return 1
+            return [1,"hoge"]
         endif
     endfor
 
