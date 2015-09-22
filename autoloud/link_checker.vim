@@ -23,9 +23,10 @@ function! Matcher(path)
     let fromLinkTagList = GetFromLinkTagList(a:path)
     let toLinkTagList = GetToLinkTagList(a:path)
 
-    for char in fromLinkTagList
-        if match(toLinkTagList,char)
-            return [0,char]
+    for char in toLinkTagList
+        if match(fromLinkTagList,char)
+            let match_list= matchstr(fromLinkTagList,char)
+            return [0,match_list]
         else
             return 1
         endif
@@ -40,8 +41,8 @@ endfunction
 
 
 
-function! Report(place)
-    let ret = [{'filename':a:place}]
+function! Report(notlink,filename)
+    let ret = [{'filename':a:filename,'text':"hoge"}]
 
     call setqflist(ret, 'a')
     copen
@@ -53,9 +54,9 @@ function! Main()
     let l:paths =  PathGet()
     for path in l:paths
         let l:infomation = Matcher(path)
-        if l:infomation[0]
+        if 0 "l:infomation[0]
         else
-            call Report(l:infomation[1])
+            call Report(l:infomation[1],path)
         endif
 
     endfor
