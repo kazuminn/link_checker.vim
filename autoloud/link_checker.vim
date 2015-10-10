@@ -4,7 +4,7 @@ set cpo&vim
 function! GetFromLinkTagList(path)
     let l:list = []
     for line in readfile(a:path)
-        call add(list, matchstr(matchstr(line,'|\S\{-}|'),'\w.*\w'))
+        call add(l:list,matchstr(line,'|\S\{-}|'))
     endfor
     return l:list
 endfunction
@@ -13,7 +13,7 @@ endfunction
 function! GetToLinkTagList(path)
     let l:list = []
     for line in readfile(a:path)
-        call add(list, matchstr(matchstr(line,'\*\S\{-}\*'),'\w.*\w'))
+        call add(l:list, matchstr(line,'\*\S\{-}\*'))
     endfor
     return l:list
 endfunction
@@ -23,15 +23,21 @@ function! Matcher(path)
     let fromLinkTagList = GetFromLinkTagList(a:path)
     let toLinkTagList = GetToLinkTagList(a:path)
 
+    let key = 0 "見つからない前提
+    let match_list = []
+
     for char in toLinkTagList
         if match(fromLinkTagList,char)
-            let match_list= filter(fromLinkTagList,'v:val =~ char')
-            return [0,"hoge"]
-        else
-            return [1,"hoge"]
+            call add(match_list,char)
+            let key = 1
         endif
     endfor
 
+    if key == 1
+        return [1,"hoge"]
+    else
+        return [0,"hoge"]
+    endif
 endfunction
 
 
@@ -40,25 +46,22 @@ function! PathGet()
 endfunction
 
 
-
 function! Report(notlink,filename)
-    let ret = [{'filename':a:filename,'text':"hoge"}]
+    let ret = [{'filename':a:filename,'text':a:notlink}]
 
     call setqflist(ret, 'a')
     copen
 endfunction
 
-
+"見つかったら真。1
 
 function! Main()
     let l:paths =  PathGet()
     for path in l:paths
         let l:infomation = Matcher(path)
-        if 0 "l:infomation[0]
-        else
+        if l:infomation[0] "l:infomation[0]
             call Report(l:infomation[1],path)
         endif
-
     endfor
 endfunction
 
